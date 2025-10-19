@@ -1,0 +1,101 @@
+this works for the two-tier-flask-app folder
+
+*******************************************************************
+NETWORKS:
+
+3 types of networks:
+1) Host
+2) Bridge
+3) User defined Bridge
+4) None
+5) MACVLAN
+6) IPVLAN
+7) Overlay
+
+docker network ls
+docker network create mynetwork -d bridge
+
+##
+Creating a 2 tier project with a network connecting a flask and mysql container that are running independently
+##
+
+1. git clone https://github.com/LondheShubham153/two-tier-flask-app.git 
+→ Downloads the Flask app’s source code from GitHub.
+
+2. docker build -t two-tier-backend . 
+→ Builds a Docker image named two-tier-backend from the current directory’s Dockerfile.
+
+3. docker network create two-tier -d bridge 
+→ Creates a custom Docker bridge network called two-tier for container communication.
+
+4. docker run -d --name mysql --network two-tier -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql 
+→ Starts a MySQL container on the two-tier network with root password and a database named devops.
+
+5. docker run -d -p 5000:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest
+-> -p 5000:5000
+Maps port 5000 on your host machine to port 5000 inside the container.
+This allows you to access the Flask app running inside the container via http://localhost:5000.
+-> --network two-tier
+Connects the container to a custom Docker network named two-tier.
+This allows it to communicate with other containers (like MySQL) on that same network using their container names (e.g., mysql).
+-> -e MYSQL_HOST=mysql
+Sets an environment variable inside the container: MYSQL_HOST=mysql.
+The Flask app will use this to know that the MySQL server’s hostname is mysql (the name of the MySQL container).
+-> -e MYSQL_USER=root
+Sets the MySQL username (root) the Flask app should use to connect to the database.
+-> -e MYSQL_PASSWORD=root
+Sets the MySQL password (root) for the Flask app’s database connection.
+-> -e MYSQL_DB=devops
+Specifies which database (devops) the Flask app should connect to inside MySQL.
+-> two-tier-backend:latest
+The Docker image used to create the container.
+In this case, it’s the Flask backend image you built earlier using docker build.
+
+6. docker logs 05b2d1bd4c20 
+→ Displays the logs from the running Flask container (using its container ID).
+
+7. docker network inspect two-tier 
+→ Shows detailed info about the two-tier network and connected containers.
+
+8. docker exec -it e8bf12de7aa3 bash 
+→ Opens an interactive bash shell inside the MySQL container.
+
+9. bash-5.1# mysql -u root -p 
+→ Starts a MySQL client session as root inside the container.
+
+10. mysql> use devops; 
+→ Switches to the devops database in MySQL.
+
+11. select * from messages; 
+→ Displays all rows from the messages table in the devops database.
+
+*******************************************************************
+VOLUMES:
+
+Used for persisting data of containers in case of failure.
+
+1. docker volume create mysql-data
+
+2. docker inspect mysql-data
+-> "Mountpoint": "/var/lib/docker/volumes/mysql-data/_data", we want to bind out mysql container data with the mountpoint of the mysql-data volume.
+
+3. docker run -d --name mysql --network two-tier -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql
+-> run the same command to create mysql container but this time bind the mysql-data volume to the container.
+-> var/lib/mysql : this is where the mysql container data is stored
+
+4. docker restart 05b2d1bd4c20
+-> restarting two-tier-backend container since mysql was deleted and created anew
+
+5. docker stop 65f598737ab4 && docker rm 65f598737ab4
+-> again removing mysql container to see if the data of this container still persists or not
+
+6. cd /var/lib/docker/volumes/mysql-data/_data
+-> we can see the data was stored in this folder
+
+7. docker run -d --name mysql --network two-tier -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql
+-> creating the mysql container again to see if this time data from previously deleted container persists or not
+
+8. docker restart 05b2d1bd4c20
+-> restarting two-tier-backend container since mysql was deleted and created anew
+
+we can see that the data persisted because of the mysql-data volume even after the mysql container was deleted and created again

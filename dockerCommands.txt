@@ -1,0 +1,85 @@
+sudo systemctl status docker
+→ Checks the current status of the Docker service (running, stopped, etc.) using systemd.
+
+sudo usermod -aG docker $USER
+→ Adds the current user to the docker group to allow Docker commands without sudo.
+
+docker login -u tanmaymachkar
+→ Logs in to Docker Hub using the username tanmaymachkar (will prompt for password).
+
+sudo docker ps -a
+→ Lists all Docker containers, including stopped ones.
+
+*******************************************************************
+docker pull hello-world
+→ Downloads the hello-world image from Docker Hub to verify Docker is working.
+
+docker run hello-world
+→ Runs a container from the hello-world image, which prints a confirmation message.
+
+*******************************************************************
+# this is for mysql image
+
+docker pull mysql
+→ Downloads the official MySQL Docker image from Docker Hub.
+
+docker run -d -e MYSQL_ROOT_PASSWORD=root mysql
+→ Starts a MySQL container in detached mode with the root password set to root.
+
+docker exec -it f516ff8fadc1 bash
+→ Opens an interactive Bash shell inside the running container with ID f516ff8fadc1.
+
+bash-5.1# mysql -u root -p
+→ Starts the MySQL command-line client inside the container, logging in as the root user and prompting for a password.
+
+docker stop b02bafe94168
+→ Stops the running container with ID b02bafe94168.
+
+*******************************************************************
+# this is for simple-java-docker folder
+
+vim Dockerfile
+→ Opens the Dockerfile in the vim text editor to write instructions for building a custom image.
+
+docker build -t java-app .
+→ Builds a Docker image named java-app using the Dockerfile in the current directory (.).
+
+docker run java-app
+→ Runs a container from the java-app image.
+
+*******************************************************************
+# this is for flask-app-ecs
+
+docker build -t flask-app .
+→ Builds a Docker image named flask-app using the Dockerfile in the current directory (.).
+
+docker run -d -p 80:80 flask-app 
+→ Runs a new container from the flask-app image in detached mode, mapping port 80 on the host to port 80 inside the container.
+
+docker logs bf55b3a9616c 
+→ Shows the logs produced by the container with ID bf55b3a9616c.
+
+docker attach bf55b3a9616c 
+→ Connects your terminal to the running container so you can view and interact with its output directly.
+
+docker start bf55b3a9616c 
+→ Starts the existing container with ID bf55b3a9616c if it is stopped.
+
+docker stop bf55b3a9616c 
+→ Stops the running container with ID bf55b3a9616c gracefully.
+
+*******************************************************************
+# this is for the node-todo-cicd folder
+
+docker build -t node-app . 
+→ Builds a Docker image from the current directory’s Dockerfile and names it node-app.
+
+docker run -d -p 8000:8000 node-app 
+→ Runs the node-app image in detached mode and maps host port 8000 to container port 8000.
+
+docker logs ba07d897a5ae 
+→ Displays the logs (output) from the running container with ID ba07d897a5ae.
+
+*******************************************************************
+docker run -itd ubuntu # -itd (interactive terminal and in detach mode)
+→ The -itd flag runs the container in interactive mode with a TTY (-it) and detaches it to run in the background (-d).
