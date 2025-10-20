@@ -99,3 +99,7 @@ Used for persisting data of containers in case of failure.
 -> restarting two-tier-backend container since mysql was deleted and created anew
 
 we can see that the data persisted because of the mysql-data volume even after the mysql container was deleted and created again
+
+*******************************************************************
+docker compose up
+docker compose up -d
