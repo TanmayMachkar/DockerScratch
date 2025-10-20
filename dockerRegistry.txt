@@ -1,6 +1,9 @@
 *******************************************************************
 1. docker image tag two-tier-flask-app-flask:latest tanmaymachkar/two-tier-backend:latest
+-> Tags the local image two-tier-flask-app-flask:latest as tanmaymachkar/two-tier-backend:latest.
+
 2. docker push tanmaymachkar/two-tier-backend
+-> Pushes the tagged image to the Docker Hub repository tanmaymachkar/two-tier-backend.
 
 3. now we can use the image that we pushed on our docker hub acc to be used in docker-compose.yml file in the two-tier-flask-app folder -> flask:
      image: tanmaymachkar/two-tier-backend:latest
