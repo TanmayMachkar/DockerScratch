@@ -21,3 +21,14 @@ COPY --from=builder /usr/local/lib/python3.7/site-packages/ /usr/local/lib/pytho
 COPY . .
 
 ENTRYPOINT ["python", "run.py"]
+
+*******************************************************************
+1. docker build -t flask-app-mini .
+2. docker images
+-> flask-app-mini - 142MB
+
+we can see that using multi stage docker builds we could reduce the size of the image from 1.04GB to simply 142MB
+
+3. docker run -d -p 8080:80 flask-app-mini:latest
+-> map port of flask app which is 80 inside the host machine code to 8080 inside the container
+-> you can now visit the site at http://localhost:8080/
